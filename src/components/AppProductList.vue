@@ -6,6 +6,7 @@
       <li v-for="product in products" :key="product.id">
         {{ product.title }} | {{ product.price }}
         <i>{{ product.inventory }} </i>
+        <button @click="addProductToCart(product)">Cart</button>
       </li>
     </ul>
   </div>
@@ -16,6 +17,11 @@ export default {
   name: "AppProductList",
   async created() {
     await this.$store.dispatch("getProducts");
+  },
+  methods: {
+    addProductToCart(product) {
+      this.$store.dispatch("addProductToCart", product);
+    },
   },
   computed: {
     products() {
