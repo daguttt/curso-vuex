@@ -11,7 +11,11 @@ export default new Vuex.Store({
       { id: 3, title: "Charli XCX - Sucker CD", price: 19.99, inventory: 5 }
     ]
   },
-  mutations: {},
+  mutations: {
+    setProducts(state, products) {
+      state.products = products
+    }
+  },
   actions: {},
   modules: {}
 });
