@@ -13,9 +13,9 @@ export default new Vuex.Store({
     setProducts(state, products) {
       state.products = products
     },
-    decreaseProductInventory(state, idProduct) {
-      const product = state.products.find(el => el.id === idProduct);
-      product.inventory--;
+    decreaseProductInventory(state, item) {
+      const productToDecreaseInventory = state.products.find(el => el.id === item.id);
+      productToDecreaseInventory.inventory--;
     },
     addProductToCart(state, product) {
       state.cart.push({
@@ -23,9 +23,9 @@ export default new Vuex.Store({
         amount: 1,
       })
     },
-    incrementProductInCart(state, idProduct) {
-      const product = state.cart.find(el => el.id === idProduct);
-      product.amount++;
+    incrementProductInCart(state, item) {
+      const productToIncrement = state.cart.find(el => el.id === item.id);
+      productToIncrement.amount++;
     },
   },
   actions: {
@@ -39,7 +39,7 @@ export default new Vuex.Store({
     },
     addProductToCart(context, product) {
       // ¿Existe inventario del producto? 
-      if (product.inventory < 0) return
+      if (product.inventory === 0) return
 
       // ¿Está el producto en el carrito?
       const item = context.state.cart.find(el => el.id === product.id)
@@ -48,14 +48,27 @@ export default new Vuex.Store({
       !item ?
         context.commit('addProductToCart', product) :
         // Si está, se aumenta su cantidad
-        context.commit('incrementProductInCart', product.id)
+        context.commit('incrementProductInCart', item)
 
       // Restar cantidad de inventario del producto
-      context.commit('decreaseProductInventory', product.id)
+      context.commit('decreaseProductInventory', product)
     }
   },
   getters: {
-    productsOnStock: state => state.products.filter(product => product.inventory > 0)
+    productsOnStock: state => state.products.filter(product => product.inventory > 0),
+    productsInCart: state => {
+      // Construir un arrary con base en los productos del carrito
+      return state.cart.map(item => {
+        // Es necesario buscar cada item del carrito en el array
+        // de todos los productos para poder extraer el 'title' y el 'price'
+        const currentProduct = state.products.find(el => el.id === item.id)
+        return {
+          title: currentProduct.title,
+          price: currentProduct.price,
+          amount: item.amount
+        }
+      })
+    }
   },
   modules: {}
 });

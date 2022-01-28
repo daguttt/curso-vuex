@@ -4,7 +4,7 @@
     <hr />
     <ul>
       <li v-for="product in products" :key="product.id">
-        {{ product.title }} | {{ product.price }}
+        {{ product.title }} | {{ product.price }} |
         <i>{{ product.inventory }} </i>
         <button @click="addProductToCart(product)">Cart</button>
       </li>
