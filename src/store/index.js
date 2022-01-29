@@ -10,29 +10,50 @@ export default new Vuex.Store({
     cart: [],
   },
   mutations: {
-    setProducts(state, products) {
+    // Products (Invetory) Mutations 
+    setProductsInventory(state, products) {
       state.products = products
     },
-    decreaseProductInventory(state, item) {
-      const productToDecreaseInventory = state.products.find(el => el.id === item.id);
+    // Product
+    restoreProductInventory(state, product) {
+      let productToIncrement = state.products.find(el => el.id === product.id)
+      productToIncrement.inventory += product.amount
+    },
+    incrementProductInventory(state, product) {
+      const productToIncrement = state.products.find(el => el.id === product.id)
+      productToIncrement.inventory++
+    },
+    decreaseProductInventory(state, product) {
+      const productToDecreaseInventory = state.products.find(el => el.id === product.id);
       productToDecreaseInventory.inventory--;
     },
-    addProductToCart(state, product) {
+
+    // -**********************************-
+
+    // Cart Mutations
+    addProductToCart(state, item) {
       state.cart.push({
-        id: product.id,
+        id: item.id,
         amount: 1,
       })
+    },
+    removeProductFromCart(state, indexItem) {
+      state.cart.splice(indexItem, 1)
     },
     incrementProductInCart(state, item) {
       const productToIncrement = state.cart.find(el => el.id === item.id);
       productToIncrement.amount++;
+    },
+    decreaseProductInCart(state, item) {
+      const productToDecrease = state.cart.find(el => el.id === item.id);
+      productToDecrease.amount--;
     },
   },
   actions: {
     getProducts(context) {
       return new Promise((resolve) => {
         api.getProducts((products) => {
-          context.commit('setProducts', products)
+          context.commit('setProductsInventory', products)
           resolve()
         })
       })
@@ -52,15 +73,32 @@ export default new Vuex.Store({
 
       // Restar cantidad de inventario del producto
       context.commit('decreaseProductInventory', product)
-    }
+    },
+    removeProductFromCart({ commit, state }, indexItem) {
+      const product = state.cart[indexItem]
+      // Eliminar del carrito de compras
+      commit('removeProductFromCart', indexItem)
+      // Restaurar inventario del producto de turno
+      commit('restoreProductInventory', product)
+    },
+    decreaseProductInCart({ commit, state }, indexItem) {
+      const product = state.cart[indexItem]
+      // Remover uno de la cantidad del producto
+      commit('decreaseProductInCart', product)
+      // Añadir uno al inventario
+      commit('incrementProductInventory', product)
+    },
   },
   getters: {
     productsOnStock: state => state.products.filter(product => product.inventory > 0),
     productsInCart: state => {
-      // Construir un arrary con base en los productos del carrito
-      return state.cart.map(item => {
-        // Es necesario buscar cada item del carrito en el array
-        // de todos los productos para poder extraer el 'title' y el 'price'
+      // -**********************************-
+      // Construir un arrary con base en los productos del carrito.
+
+      // Para tener el 'title' y el 'price' de cada item...
+      const itemsInCart = state.cart.map(item => {
+        // ...es necesario buscar cada item del carrito en el array
+        // de todos los productos para poder extraer su 'title' y el 'price'.
         const currentProduct = state.products.find(el => el.id === item.id)
         return {
           title: currentProduct.title,
@@ -68,6 +106,9 @@ export default new Vuex.Store({
           amount: item.amount
         }
       })
+      // -**********************************-
+      // Retornar solo los items que tengan almenos 1 elemento
+      return itemsInCart.filter(item => item.amount > 0)
     }
   },
   modules: {}
