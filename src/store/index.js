@@ -65,11 +65,11 @@ export default new Vuex.Store({
       // ¿Está el producto en el carrito?
       const item = context.state.cart.find(el => el.id === product.id)
 
-      // 👇 Si no está, se agrega
-      !item ?
-        context.commit('addProductToCart', product) :
-        // Si está, se aumenta su cantidad
-        context.commit('incrementProductInCart', item)
+      // Si está, se aumenta su cantidad
+      item
+        ? context.commit('incrementProductInCart', item)
+        // 👇 Si no está, se agrega
+        : context.commit('addProductToCart', product)
 
       // Restar cantidad de inventario del producto
       context.commit('decreaseProductInventory', product)
