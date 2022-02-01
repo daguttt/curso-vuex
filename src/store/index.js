@@ -5,17 +5,18 @@ import api from "../api/shop.js";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  strict: true,
   state: {
     products: [],
     cart: [],
     checkoutError: false,
+    productSelected: {},
   },
   mutations: {
     // Products (Invetory) Mutations 
     setProductsInventory(state, products) {
       state.products = products
     },
-    // Product
     restoreProductInventory(state, product) {
       let productToIncrement = state.products.find(el => el.id === product.id)
       productToIncrement.inventory += product.amount
@@ -28,7 +29,25 @@ export default new Vuex.Store({
       const productToDecreaseInventory = state.products.find(el => el.id === product.id);
       productToDecreaseInventory.inventory--;
     },
+    editProduct(state, dataToUpdate) {
+      // Indice del producto seleccionado en el array de productos
+      const indexProduct = state.products.findIndex(product => product.id === state.productSelected.id)
 
+      // Actualizar el producto (Se crea un nuevo obj)
+      // - Tutorial way
+      // const productUpdated = Object.assign({}, state.products[indexProduct], dataToUpdate)
+      // - My way
+      const productUpdated = { ...state.products[indexProduct], title: dataToUpdate.title }
+
+      // Actualizar activando la reactividad
+      Vue.set(state.products, indexProduct, productUpdated)
+    },
+    // -**********************************-
+
+    // Product selected Mutations
+    setProductSelected(state, product) {
+      state.productSelected = product;
+    },
     // -**********************************-
 
     // Cart Mutations
@@ -135,6 +154,12 @@ export default new Vuex.Store({
     cartTotalPrice: (state, getters) => {
       return getters.productsInCart.reduce((total, curr) => total + curr.price * curr.amount, 0)
     },
+    productSelected: state => {
+      // Si hay un producto seleccionado, se retorna, si no se retorna false
+      return Object.values(state.productSelected).length
+        ? state.productSelected
+        : false
+    }
   },
   modules: {}
 });

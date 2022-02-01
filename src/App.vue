@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <AppProductList />
+    <AppEditProduct v-if="productSelected" />
     <br />
     <br />
     <AppShoppingCart />
@@ -10,11 +11,18 @@
 <script>
 import AppProductList from "./components/AppProductList.vue";
 import AppShoppingCart from "./components/AppShoppingCart.vue";
+import AppEditProduct from "./components/AppEditProduct.vue";
 export default {
   name: "app",
   components: {
     AppProductList,
     AppShoppingCart,
+    AppEditProduct,
+  },
+  computed: {
+    productSelected() {
+      return this.$store.getters.productSelected;
+    },
   },
 };
 </script>
