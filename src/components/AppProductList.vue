@@ -10,7 +10,7 @@
       >
         {{ product.title }} | {{ product.price }} |
         <i>{{ product.inventory }} </i>
-        <button @click="addProductToCart(product)">Cart</button>
+        <button @click.stop="addProductToCart(product)">Cart</button>
       </li>
     </ul>
   </div>
