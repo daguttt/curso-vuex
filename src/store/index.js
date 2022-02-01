@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     products: [],
     cart: [],
+    checkoutError: false,
   },
   mutations: {
     // Products (Invetory) Mutations 
@@ -48,6 +49,16 @@ export default new Vuex.Store({
       const productToDecrease = state.cart.find(el => el.id === item.id);
       productToDecrease.amount--;
     },
+    emptyCart(state) {
+      state.cart = []
+    },
+
+    // -**********************************-
+
+    // Checkout Error Mutations
+    setCheckoutError(state, error) {
+      state.checkoutError = error
+    }
   },
   actions: {
     getProducts(context) {
@@ -88,6 +99,17 @@ export default new Vuex.Store({
       // Añadir uno al inventario
       commit('incrementProductInventory', product)
     },
+    checkout({ commit, state }) {
+      api.buyProducts(state.cart, () => {
+        // Vaciar carrito
+        commit('emptyCart')
+        // Establecer que no hubo error
+        commit('setCheckoutError', false)
+      }, () => {
+        // Establecer que ocurrió un error
+        commit('setCheckoutError', true)
+      })
+    }
   },
   getters: {
     productsOnStock: state => state.products.filter(product => product.inventory > 0),

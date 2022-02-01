@@ -9,7 +9,13 @@
         <button @click="removeItemFromCart($index)">X</button>
       </li>
     </ul>
-    <h4>Total: {{ cartTotalPrice }}</h4>
+    <div class="checkout">
+      <h4>Total: {{ cartTotalPrice }}</h4>
+      <button v-if="cartItems.length" @click="checkout">Comprar</button>
+      <p v-if="$store.state.checkoutError">
+        Ocurrió un error al hacer la compra
+      </p>
+    </div>
   </div>
 </template>
 
@@ -23,6 +29,9 @@ export default {
     },
     removeItemFromCart(indexItem) {
       this.$store.dispatch("removeProductFromCart", indexItem);
+    },
+    checkout() {
+      this.$store.dispatch("checkout");
     },
   },
   computed: {
@@ -43,5 +52,13 @@ ul {
 h4 {
   padding-left: 2rem;
   text-align: left;
+}
+.checkout {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.checkout button {
+  padding: 0.75rem 1rem;
 }
 </style>
