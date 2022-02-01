@@ -109,7 +109,10 @@ export default new Vuex.Store({
       // -**********************************-
       // Retornar solo los items que tengan almenos 1 elemento
       return itemsInCart.filter(item => item.amount > 0)
-    }
+    },
+    cartTotalPrice: (state, getters) => {
+      return getters.productsInCart.reduce((total, curr) => total + curr.price * curr.amount, 0)
+    },
   },
   modules: {}
 });
