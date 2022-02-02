@@ -18,23 +18,56 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "AppProductList",
   async created() {
     await this.$store.dispatch("getProducts");
   },
+
+  // -**********************************-
+
+  // Métodos
+  // methods: {
+  //   addProductToCart(product) {
+  //     this.$store.dispatch("addProductToCart", product);
+  //   },
+  //   selectProduct(product) {
+  //     this.$store.commit("setProductSelected", product);
+  //   },
+  // },
   methods: {
-    addProductToCart(product) {
-      this.$store.dispatch("addProductToCart", product);
-    },
-    selectProduct(product) {
-      this.$store.commit("setProductSelected", product);
-    },
+    ...mapActions(["addProductToCart"]),
+    ...mapMutations({
+      selectProduct: "setProductSelected",
+    }),
   },
+
+  // -**********************************-
+
+  // Propiedades computadas
+  // computed: {
+  //   products() {
+  //     return this.$store.getters.productsOnStock;
+  //   },
+  // },
+
+  // !-*************************************************************************-
+  // ! SINTAXIS MAP HELPERS
+  // !-*************************************************************************-
+
+  // * Si NO difieren los nombres usados
+  // computed: mapGetters(["productsOnStock"]),
+  // * Si difieren los nombres usados
+  // computed: mapGetters({
+  //     products: "productsOnStock"
+  //   })
+  // * Si se usan además propiedades o métodos propios del componente
   computed: {
-    products() {
-      return this.$store.getters.productsOnStock;
-    },
+    ...mapGetters({
+      products: "productsOnStock",
+    }),
+    testing: () => null,
   },
 };
 </script>
