@@ -159,7 +159,11 @@ export default new Vuex.Store({
       return Object.values(state.productSelected).length
         ? state.productSelected
         : false
-    }
+    },
+    productNearlySoldOut: state => id => {
+      const product = state.products.find(prod => prod.id === id)
+      return product.inventory < 2;
+    },
   },
   modules: {}
 });

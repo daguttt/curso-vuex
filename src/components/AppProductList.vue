@@ -4,6 +4,7 @@
     <hr />
     <ul>
       <li
+        :class="{ 'sold-out': $store.getters.productNearlySoldOut(product.id) }"
         v-for="product in products"
         :key="product.id"
         @click="selectProduct(product)"
@@ -41,5 +42,11 @@ export default {
 <style scoped>
 ul {
   text-align: left;
+}
+.sold-out {
+  background-color: lightpink;
+  color: tomato;
+  padding: 0.25rem;
+  margin: 0.3rem;
 }
 </style>
